@@ -62,13 +62,13 @@ class openai_function:
         ```
     """
 
-    def __init__(self, func: Callable, ignore_self=False) -> None:
+    def __init__(self, func: Callable=None, ignore_self=False) -> None:
         self.func = func
         self.validate_func = validate_arguments(func)
         parameters = self.validate_func.model.schema()
         blacklist = ("v__duplicate_kwargs", "args", "kwargs")
         if ignore_self:
-            blacklist += 'self'
+            blacklist += ('self',)
         parameters["properties"] = {
             k: v
             for k, v in parameters["properties"].items()
