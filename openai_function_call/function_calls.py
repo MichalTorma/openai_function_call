@@ -101,7 +101,22 @@ class openai_function:
         Returns:
             result (any): result of the function call
         """
-        message = completion.choices[0].message
+        choice = completion.choices[0]
+
+        return self.from_choice(choice, throw_error=throw_error)
+
+    def from_choice(self, choice, throw_error=True):
+        """
+        Parse the choice from OpenAI's API and return the function call
+
+        Parameters:
+            choice (openai.ChatCompletion.Choice): The choice from the response from OpenAI's API
+            throw_error (bool): Whether to throw an error if the response does not contain a function call
+
+        Returns:
+            result (any): result of the function call
+        """
+        message = choice.message
 
         if throw_error:
             assert "function_call" in message, "No function call detected"
