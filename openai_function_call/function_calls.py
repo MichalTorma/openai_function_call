@@ -168,7 +168,22 @@ class OpenAISchema(BaseModel):
         Returns:
             cls (OpenAISchema): An instance of the class
         """
-        message = completion.choices[0].message
+        choice = completion.choices[0]
+
+        return OpenAISchema.from_choice(choice=choice, throw_error=throw_error)
+
+    @classmethod
+    def from_choice(cls, choice, throw_error=True):
+        """Execute the function from the choice of an openai chat completion
+
+        Parameters:
+            choice (openai.ChatCompletion): The choice from an openai chat completion
+            throw_error (bool): Whether to throw an error if the function call is not detected
+
+        Returns:
+            cls (OpenAISchema): An instance of the class
+        """
+        message = choice.message
 
         if throw_error:
             assert "function_call" in message, "No function call detected"
