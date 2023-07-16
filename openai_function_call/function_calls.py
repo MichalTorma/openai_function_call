@@ -62,14 +62,17 @@ class openai_function:
         ```
     """
 
-    def __init__(self, func: Callable) -> None:
+    def __init__(self, func: Callable, ignore_self=False) -> None:
         self.func = func
         self.validate_func = validate_arguments(func)
         parameters = self.validate_func.model.schema()
+        blacklist = ("v__duplicate_kwargs", "args", "kwargs")
+        if ignore_self:
+            blacklist += 'self'
         parameters["properties"] = {
             k: v
             for k, v in parameters["properties"].items()
-            if k not in ("v__duplicate_kwargs", "args", "kwargs")
+            if k not in blacklist
         }
         parameters["required"] = sorted(
             parameters["properties"]
